@@ -54,7 +54,7 @@ public class StartController {
             "order by 1";
 
     @FXML
-    public void loadUmowy() throws SQLException{
+    public void loadUmowy() throws SQLException {
         try {
             Connection con = DbConnection.getConnection();
             this.umowyList = FXCollections.observableArrayList();
