@@ -11,7 +11,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import umowy.dbUtils.DbConnection;
-import umowy.model.UmowyModel;
+import umowy.models.UmowyModel;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

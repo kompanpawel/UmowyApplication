@@ -1,4 +1,4 @@
-package umowy.model;
+package umowy.models;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
