@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="635.0" prefWidth="1143.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="umowy.controllers.StartController">
+   <children>
+      <TableView fx:id="umowy" layoutY="1.0" prefHeight="635.0" prefWidth="886.0">
+        <columns>
+          <TableColumn fx:id="umowy_id" prefWidth="36.0" text="id" />
+          <TableColumn fx:id="umowy_data" prefWidth="102.0" text="Data" />
+            <TableColumn fx:id="umowy_rozliczanie" prefWidth="87.0" text="Rozliczanie" />
+            <TableColumn fx:id="umowy_rozwiazanie" prefWidth="84.0" text="Rozwiązanie" />
+            <TableColumn fx:id="umowy_pesel" prefWidth="89.0" text="Nr PESEL" />
+            <TableColumn fx:id="umowy_kontakt" prefWidth="142.0" text="Kontakt w firmie" />
+            <TableColumn fx:id="umowy_kontrahent" prefWidth="150.0" text="Kontrahent indywidualny" />
+            <TableColumn fx:id="umowy_rodzaj" prefWidth="195.0" text="Rodzaj umowy" />
+        </columns>
+      </TableView>
+      <Button fx:id="newContract" layoutX="925.0" layoutY="93.0" mnemonicParsing="false" onAction="#stworzNowaUmowe" prefHeight="40.0" prefWidth="175.0" text="Utwórz nową umowę" />
+      <Button fx:id="update" layoutX="925.0" layoutY="551.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" text="Odśwież dane" />
+      <Button fx:id="raport" layoutX="925.0" layoutY="159.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" text="Generuj raport" />
+   </children>
+</AnchorPane>
