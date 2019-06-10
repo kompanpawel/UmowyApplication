@@ -1,19 +1,22 @@
 package umowy.controllers;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import umowy.dbUtils.DbConnection;
 import umowy.models.KontaktModel;
 import umowy.models.KontrahentModel;
 import umowy.models.RodzajModel;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class NowaUmowaController {
 
@@ -61,6 +64,22 @@ public class NowaUmowaController {
     private TableColumn<RodzajModel, String> rodzaj_rodzaj;
 
 
+    @FXML
+    private DatePicker new_data;
+    @FXML
+    private TextField new_sposob;
+    @FXML
+    private TextField new_warunek;
+    @FXML
+    private TextField pesel;
+    @FXML
+    private TextField new_kontakt;
+    @FXML
+    private TextField new_kontrahent;
+    @FXML
+    private TextField new_rodzaj;
+    @FXML
+    private Button confirm;
 
 
     public void initialize() throws SQLException {
@@ -145,5 +164,80 @@ public class NowaUmowaController {
 
         this.rodzaj.setItems(null);
         this.rodzaj.setItems(rodzajList);
+    }
+
+    public void dodajNowaUmowe() throws SQLException {
+        String sqlKey = "select max(u.id) from BD3.dbo.umowa u";
+        String sqlCheckPracownik = "select * from BD3.dbo.pracownik where pesel = ?";
+        String sqlCheckKontakt = "select * from BD3.dbo.kontakt_w_firmie where id_kontaktu = ?";
+        String sqlCheckKontrahent = "select * from BD3.dbo.kontrahent_indywidualny where id_klienta = ?";
+        String sqlCheckRodzaj = "select * from BD3.dbo.rodzaj_umowy where id_rodzaju = ?";
+        LocalDate date = this.new_data.getValue();
+
+        try {
+            Connection con = DbConnection.getConnection();
+            ResultSet rs = con.createStatement().executeQuery(sqlKey);
+            rs.next();
+            int key = rs.getInt(1);
+            key++;
+            String sqlInsert = "Insert into BD3.dbo.umowa (id, data_zawarcia, sposob_rozliczenia, warunek_rozwiazania, pracownik_pesel, kontakt_w_firmie_id_kontaktu, kontrahent_indywidualny, rodzaj_umowy_id_rodzaju)" +
+                    " values (?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = con.prepareStatement(sqlInsert);
+            stmt.setString(1, String.valueOf(key));
+            if(date != null)
+                stmt.setString(2, date.toString());
+            stmt.setString(3, this.new_sposob.getText());
+            stmt.setString(4, this.new_warunek.getText());
+            stmt.setString(5, this.pesel.getText());
+            stmt.setString(6, this.new_kontakt.getText());
+            stmt.setString(7, this.new_kontrahent.getText());
+            stmt.setString(8, this.new_rodzaj.getText());
+            boolean pracownikChecked = checkData(sqlCheckPracownik, this.pesel.getText());
+            boolean kontaktChecked = checkData(sqlCheckKontakt, this.new_kontakt.getText());
+            boolean kontrahentChecked = checkData(sqlCheckKontrahent, this.new_kontrahent.getText());
+            boolean rodzajChecked = checkData(sqlCheckRodzaj, this.new_rodzaj.getText());
+            if(pracownikChecked && kontaktChecked && kontrahentChecked && rodzajChecked && this.new_data.getValue() != null) {
+                stmt.execute();
+                Stage stage = (Stage) this.confirm.getScene().getWindow();
+                stage.close();
+            }
+            else {
+                String alertText = "Błędne: \n";
+                if(this.new_data.getValue() == null) alertText += " brak daty \n";
+                if(!pracownikChecked) alertText += " pesel \n";
+                if(!kontaktChecked) alertText += " kontakt w firmie \n";
+                if(!kontrahentChecked) alertText += " kontrahent indywidualny \n";
+                if(!rodzajChecked) alertText += " rodzaj umowy \n";
+                alertText += "Popraw dane.";
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText(alertText);
+                alert.showAndWait();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkData(String query, String data) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            Connection con = DbConnection.getConnection();
+            ps = con.prepareStatement(query);
+            ps.setString(1, data);
+
+            rs = ps.executeQuery();
+
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        finally {
+            ps.close();
+            rs.close();
+        }
     }
 }

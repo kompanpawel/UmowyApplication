@@ -74,7 +74,7 @@
       <TextField fx:id="new_warunek" layoutX="644.0" layoutY="197.0" prefHeight="33.0" prefWidth="240.0" />
       <TextField fx:id="pesel" layoutX="644.0" layoutY="577.0" prefHeight="25.0" prefWidth="207.0" />
       <Label layoutX="644.0" layoutY="543.0" prefHeight="25.0" prefWidth="207.0" text="Wpisz swój numer PESEL" />
-      <Button fx:id="confirm" layoutX="858.0" layoutY="577.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="126.0" text="Zatwierdź" />
+      <Button fx:id="confirm" layoutX="858.0" layoutY="577.0" mnemonicParsing="false" onAction="#dodajNowaUmowe" prefHeight="25.0" prefWidth="126.0" text="Zatwierdź" />
       <Label layoutX="644.0" layoutY="252.0" prefHeight="25.0" prefWidth="240.0" text="Kontakt w firmie (opcjonalne):" />
       <TextField fx:id="new_kontakt" layoutX="644.0" layoutY="277.0" prefHeight="33.0" prefWidth="240.0" promptText="Wpisz nr ID kontaktu" />
       <Label layoutX="644.0" layoutY="331.0" prefHeight="25.0" prefWidth="240.0" text="Kontrahent indywidualny (opcjonalne):" />
