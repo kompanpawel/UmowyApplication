@@ -56,41 +56,14 @@ public class StartController {
     @FXML
     private ComboBox<PracownikModel> filter_pracownik;
 
-    public void initialize() throws SQLException {
+
+    public void initialize() {
         fillDzialComboBox();
         fillPracownikComboBox();
         loadUmowy();
     }
 
-    @FXML
-    public void loadPracownicy() throws SQLException {
-        updatePracownikComboBox();
-    }
-
-    @FXML
-    public void update() throws SQLException{
-        loadUmowy();
-    }
-
-    @FXML
-    private void loadUmowy() throws SQLException {
-        try {
-            Connection con = DbConnection.getConnection();
-            this.umowyList = FXCollections.observableArrayList();
-
-            String umowyView = "select * from BD3.dbo.main_umowy";
-            ResultSet rs = con.createStatement().executeQuery(umowyView);
-            while(rs.next()) {
-                this.umowyList.add(new UmowyModel(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8)));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error"+e);
-        }
-        setCellValues();
-        this.umowy.setItems(this.umowyList);
-    }
-
-    private void fillDzialComboBox() throws SQLException {
+    private void fillDzialComboBox() {
         String sqlDzialy = "select nazwa from BD3.dbo.dzial";
         try {
             Connection con = DbConnection.getConnection();
@@ -109,26 +82,67 @@ public class StartController {
         this.filter_dzial.setValue("Wszystkie działy");
     }
 
-private void fillPracownikComboBox() throws SQLException {
-    String sqlPracownicy = "select imie, nazwisko from BD3.dbo.pracownik";
-    try {
-        Connection con = DbConnection.getConnection();
-        this.pracownicyList = FXCollections.observableArrayList();
+    private void fillPracownikComboBox() {
+        String sqlPracownicy = "select imie, nazwisko from BD3.dbo.pracownik";
+        try {
+            Connection con = DbConnection.getConnection();
+            this.pracownicyList = FXCollections.observableArrayList();
 
-        ResultSet rs = con.createStatement().executeQuery(sqlPracownicy);
-        this.pracownicyList.add(new PracownikModel("Wszyscy", "pracownicy"));
-        while (rs.next()) {
-            this.pracownicyList.add(new PracownikModel(rs.getString(1), rs.getString(2)));
+            ResultSet rs = con.createStatement().executeQuery(sqlPracownicy);
+            this.pracownicyList.add(new PracownikModel("Wszyscy", "pracownicy"));
+            while (rs.next()) {
+                this.pracownicyList.add(new PracownikModel(rs.getString(1), rs.getString(2)));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error" + e);
         }
-    } catch (SQLException e) {
-        System.err.println("Error" + e);
+        this.filter_pracownik.setItems(null);
+        this.filter_pracownik.setItems(pracownicyList);
+        this.filter_pracownik.setValue(new PracownikModel("Wszyscy", "pracownicy"));
     }
-    this.filter_pracownik.setItems(null);
-    this.filter_pracownik.setItems(pracownicyList);
-    this.filter_pracownik.setValue(new PracownikModel("Wszyscy", "pracownicy"));
-}
 
-    public void updatePracownikComboBox() throws SQLException {
+    @FXML
+    public void loadPracownicy() {
+        updatePracownikComboBox();
+    }
+
+    @FXML
+    public void update() {
+        loadUmowy();
+    }
+
+    private void setCellValues() {
+        this.umowy_id.setCellValueFactory(new PropertyValueFactory<>("id"));
+        this.umowy_data.setCellValueFactory(new PropertyValueFactory<>("data"));
+        this.umowy_rozliczanie.setCellValueFactory(new PropertyValueFactory<>("sposob"));
+        this.umowy_rozwiazanie.setCellValueFactory(new PropertyValueFactory<>("warunek"));
+        this.umowy_pesel.setCellValueFactory(new PropertyValueFactory<>("pesel"));
+        this.umowy_kontakt.setCellValueFactory(new PropertyValueFactory<>("kontakt"));
+        this.umowy_kontrahent.setCellValueFactory(new PropertyValueFactory<>("kontrahent"));
+        this.umowy_rodzaj.setCellValueFactory(new PropertyValueFactory<>("rodzaj"));
+
+        this.umowy.setItems(null);
+    }
+
+    @FXML
+    private void loadUmowy() {
+        try {
+            Connection con = DbConnection.getConnection();
+            this.umowyList = FXCollections.observableArrayList();
+
+            String umowyView = "select * from BD3.dbo.main_umowy";
+            ResultSet rs = con.createStatement().executeQuery(umowyView);
+            while(rs.next()) {
+                this.umowyList.add(new UmowyModel(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8)));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error"+e);
+        }
+        setCellValues();
+        this.umowy.setItems(this.umowyList);
+    }
+
+    private void updatePracownikComboBox() {
         ObservableList<PracownikModel> filteredPracownicy = null;
         if (!this.filter_dzial.getSelectionModel().getSelectedItem().equals("Wszystkie działy")) {
             String getDzialKey = "select id_dzialu from BD3.dbo.dzial where nazwa = ?";
@@ -160,7 +174,7 @@ private void fillPracownikComboBox() throws SQLException {
     }
 
     @FXML
-    public void loadFilteredUmowy() throws SQLException {
+    public void loadFilteredUmowy() {
         String dateFrom = null;
         String dateTo = null;
         String dzial = null;
@@ -232,27 +246,12 @@ private void fillPracownikComboBox() throws SQLException {
         this.umowy.setItems(this.filteredUmowyList);
     }
 
-    private void setCellValues() {
-        this.umowy_id.setCellValueFactory(new PropertyValueFactory<>("id"));
-        this.umowy_data.setCellValueFactory(new PropertyValueFactory<>("data"));
-        this.umowy_rozliczanie.setCellValueFactory(new PropertyValueFactory<>("sposob"));
-        this.umowy_rozwiazanie.setCellValueFactory(new PropertyValueFactory<>("warunek"));
-        this.umowy_pesel.setCellValueFactory(new PropertyValueFactory<>("pesel"));
-        this.umowy_kontakt.setCellValueFactory(new PropertyValueFactory<>("kontakt"));
-        this.umowy_kontrahent.setCellValueFactory(new PropertyValueFactory<>("kontrahent"));
-        this.umowy_rodzaj.setCellValueFactory(new PropertyValueFactory<>("rodzaj"));
-
-        this.umowy.setItems(null);
-    }
-
     @FXML
-    public void stworzNowaUmowe() throws SQLException {
+    public void stworzNowaUmowe() {
         try {
             Stage insert = new Stage();
             FXMLLoader loader = new FXMLLoader();
             Parent root = loader.load(getClass().getResource("/nowaUmowa.fxml").openStream());
-
-            NowaUmowaController nowaUmowaController = (NowaUmowaController) loader.getController();
 
             Scene scene = new Scene(root);
             insert.setScene(scene);

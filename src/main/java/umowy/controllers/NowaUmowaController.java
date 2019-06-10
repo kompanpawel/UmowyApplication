@@ -1,6 +1,5 @@
 package umowy.controllers;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,10 +19,9 @@ import java.time.LocalDate;
 
 public class NowaUmowaController {
 
-    DbConnection db;
-    ObservableList<KontaktModel> kontaktList;
-    ObservableList<KontrahentModel> kontrahentList;
-    ObservableList<RodzajModel> rodzajList;
+    private ObservableList<KontaktModel> kontaktList;
+    private ObservableList<KontrahentModel> kontrahentList;
+    private ObservableList<RodzajModel> rodzajList;
 
     @FXML
     private TableView<KontaktModel> kontakt;
@@ -88,18 +86,15 @@ public class NowaUmowaController {
         loadRodzaje();
     }
 
-    private String kontaktySql = "select kwf.id_kontaktu, kwf.imie, kwf.nazwisko, kwf.email, kwf.telefon, kf.nazwa\n" +
-            "from BD3.dbo.kontakt_w_firmie kwf, BD3.dbo.kontrahent_firmowy kf\n" +
-            "where kwf.kontrahent_firmowy_nip = kf.nip\n" +
-            "order by 1;";
-    private String kontahenciSql = "select * from BD3.dbo.kontrahent_indywidualny";
-    private String rodzajeSql = "select * from BD3.dbo.rodzaj_umowy";
-
-    @FXML
-    public void loadKontakty() throws SQLException {
+    private void loadKontakty() {
+        String kontaktySql = "select kwf.id_kontaktu, kwf.imie, kwf.nazwisko, kwf.email, kwf.telefon, kf.nazwa\n" +
+                "from BD3.dbo.kontakt_w_firmie kwf, BD3.dbo.kontrahent_firmowy kf\n" +
+                "where kwf.kontrahent_firmowy_nip = kf.nip\n" +
+                "order by 1;";
         try {
             Connection con = DbConnection.getConnection();
             this.kontaktList = FXCollections.observableArrayList();
+
 
             ResultSet rs = con.createStatement().executeQuery(kontaktySql);
             while(rs.next()) {
@@ -110,19 +105,20 @@ public class NowaUmowaController {
             System.err.println("Error"+e);
         }
 
-        this.kontakt_id.setCellValueFactory(new PropertyValueFactory<KontaktModel, String>("id"));
-        this.kontakt_imie.setCellValueFactory(new PropertyValueFactory<KontaktModel, String>("imie"));
-        this.kontakt_nazwisko.setCellValueFactory(new PropertyValueFactory<KontaktModel, String>("nazwisko"));
-        this.kontakt_email.setCellValueFactory(new PropertyValueFactory<KontaktModel, String>("email"));
-        this.kontakt_telefon.setCellValueFactory(new PropertyValueFactory<KontaktModel, String>("telefon"));
-        this.kontakt_firma.setCellValueFactory(new PropertyValueFactory<KontaktModel, String>("firma"));
+        this.kontakt_id.setCellValueFactory(new PropertyValueFactory<>("id"));
+        this.kontakt_imie.setCellValueFactory(new PropertyValueFactory<>("imie"));
+        this.kontakt_nazwisko.setCellValueFactory(new PropertyValueFactory<>("nazwisko"));
+        this.kontakt_email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        this.kontakt_telefon.setCellValueFactory(new PropertyValueFactory<>("telefon"));
+        this.kontakt_firma.setCellValueFactory(new PropertyValueFactory<>("firma"));
 
         this.kontakt.setItems(null);
         this.kontakt.setItems(kontaktList);
 
     }
 
-    public void loadKontrahenci() throws SQLException {
+    private void loadKontrahenci() {
+        String kontahenciSql = "select * from BD3.dbo.kontrahent_indywidualny";
         try {
             Connection con = DbConnection.getConnection();
             this.kontrahentList = FXCollections.observableArrayList();
@@ -135,18 +131,19 @@ public class NowaUmowaController {
             System.err.println("Error"+e);
         }
 
-        this.kontrahent_id.setCellValueFactory(new PropertyValueFactory<KontrahentModel, String>("id"));
-        this.kontrahent_imie.setCellValueFactory(new PropertyValueFactory<KontrahentModel, String>("imie"));
-        this.kontrahent_nazwisko.setCellValueFactory(new PropertyValueFactory<KontrahentModel, String>("nazwisko"));
-        this.kontrahent_adres.setCellValueFactory(new PropertyValueFactory<KontrahentModel, String>("adres"));
-        this.kontrahent_telefon.setCellValueFactory(new PropertyValueFactory<KontrahentModel, String>("telefon"));
-        this.kontrahent_email.setCellValueFactory(new PropertyValueFactory<KontrahentModel, String>("email"));
+        this.kontrahent_id.setCellValueFactory(new PropertyValueFactory<>("id"));
+        this.kontrahent_imie.setCellValueFactory(new PropertyValueFactory<>("imie"));
+        this.kontrahent_nazwisko.setCellValueFactory(new PropertyValueFactory<>("nazwisko"));
+        this.kontrahent_adres.setCellValueFactory(new PropertyValueFactory<>("adres"));
+        this.kontrahent_telefon.setCellValueFactory(new PropertyValueFactory<>("telefon"));
+        this.kontrahent_email.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         this.kontrahent.setItems(null);
         this.kontrahent.setItems(kontrahentList);
     }
 
-    public void loadRodzaje() throws SQLException {
+    private void loadRodzaje() {
+        String rodzajeSql = "select * from BD3.dbo.rodzaj_umowy";
         try {
             Connection con = DbConnection.getConnection();
             this.rodzajList = FXCollections.observableArrayList();
@@ -159,14 +156,14 @@ public class NowaUmowaController {
             System.err.println("Error"+e);
         }
 
-        this.rodzaj_id.setCellValueFactory(new PropertyValueFactory<RodzajModel, String>("id"));
-        this.rodzaj_rodzaj.setCellValueFactory(new PropertyValueFactory<RodzajModel, String>("rodzaj"));
+        this.rodzaj_id.setCellValueFactory(new PropertyValueFactory<>("id"));
+        this.rodzaj_rodzaj.setCellValueFactory(new PropertyValueFactory<>("rodzaj"));
 
         this.rodzaj.setItems(null);
         this.rodzaj.setItems(rodzajList);
     }
 
-    public void dodajNowaUmowe() throws SQLException {
+    public void dodajNowaUmowe() {
         String sqlKey = "select max(u.id) from BD3.dbo.umowa u";
         String sqlCheckPracownik = "select * from BD3.dbo.pracownik where pesel = ?";
         String sqlCheckKontakt = "select * from BD3.dbo.kontakt_w_firmie where id_kontaktu = ?";

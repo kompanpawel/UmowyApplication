@@ -15,8 +15,6 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         Parent root = loader.load(getClass().getResource("/start.fxml").openStream());
 
-        StartController startController = (StartController) loader.getController();
-
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Aplikacja do tworzenia umów i raportów");
