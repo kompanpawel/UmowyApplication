@@ -125,7 +125,7 @@ public class StartController {
     }
 
     @FXML
-    private void loadUmowy() {
+    public void loadUmowy() {
         try {
             Connection con = DbConnection.getConnection();
             this.umowyList = FXCollections.observableArrayList();
@@ -150,6 +150,7 @@ public class StartController {
                     "on pracownik.pesel = pelnione_stanowisko.pracownik_pesel where dzial_id_dzialu = ?";
             try {
                 Connection con = DbConnection.getConnection();
+                this.pracownicyList = FXCollections.observableArrayList();
                 PreparedStatement pst = con.prepareStatement(getDzialKey);
                 String dzial = filter_dzial.getSelectionModel().getSelectedItem();
                 pst.setString(1, dzial);
@@ -159,15 +160,17 @@ public class StartController {
                 PreparedStatement pst2 = con.prepareStatement(sqlFilterDzial);
                 pst2.setInt(1, key);
                 ResultSet rs2 = pst2.executeQuery();
+                this.pracownicyList.add(new PracownikModel("Wszyscy", "pracownicy"));
                 while (rs2.next()) {
-                    filteredPracownicy.add(new PracownikModel(rs2.getString(1), rs2.getString(2)));
+                    pracownicyList.add(new PracownikModel(rs2.getString(1), rs2.getString(2)));
                 }
 
             } catch (SQLException e) {
                 System.err.println("Error" + e);
             }
             this.filter_pracownik.setItems(null);
-            this.filter_pracownik.setItems(filteredPracownicy);
+            this.filter_pracownik.setItems(pracownicyList);
+            this.filter_pracownik.setValue(new PracownikModel("Wszyscy", "pracownicy"));
         } else {
             fillPracownikComboBox();
         }
